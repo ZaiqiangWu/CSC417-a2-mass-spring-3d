@@ -59,13 +59,16 @@ void simulate() {
             Eigen::Vector3d mouse;
             Eigen::Vector6d dV_mouse;
 
+
             for(unsigned int pickedi = 0; pickedi < Visualize::picked_vertices().size(); pickedi++) {   
                 mouse = (P.transpose()*q+x0).segment<3>(3*Visualize::picked_vertices()[pickedi]) + Visualize::mouse_drag_world() + Eigen::Vector3d::Constant(1e-6);
                 dV_spring_particle_particle_dq(dV_mouse, mouse, (P.transpose()*q+x0).segment<3>(3*Visualize::picked_vertices()[pickedi]), 0.0, (Visualize::is_mouse_dragging() ? k_selected : 0.));
                 f.segment<3>(3*Visualize::picked_vertices()[pickedi]) -= dV_mouse.segment<3>(3);
             }
-
-            f = P*f; 
+            //std::cout<<q.rows()<<std::endl;
+            //std::cout<<f.rows()<<std::endl;
+            //std::cout<<P.rows()<<std::endl;
+            f = P*f;
         };
 
         //assemble stiffness matrix,
@@ -75,6 +78,7 @@ void simulate() {
         };
 
         linearly_implicit_euler(q, qdot, dt, M, force, stiffness, tmp_force, tmp_stiffness);
+        //explicit_euler(q, qdot, dt, M, force, stiffness, tmp_force, tmp_stiffness);
         t += dt;
     }
 }
@@ -121,6 +125,7 @@ int main(int argc, char **argv) {
     //setup simulation 
     init_state(q,qdot,V);
     mass_matrix_particles(M, q, m);
+    std::cout<<"deter:"<<M.toDense().determinant()<<std::endl;
     
     //setup constraint matrix
     find_min_vertices(fixed_point_indices, V, 3);
