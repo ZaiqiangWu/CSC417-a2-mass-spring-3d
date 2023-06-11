@@ -63,7 +63,7 @@ void simulate() {
             for(unsigned int pickedi = 0; pickedi < Visualize::picked_vertices().size(); pickedi++) {   
                 mouse = (P.transpose()*q+x0).segment<3>(3*Visualize::picked_vertices()[pickedi]) + Visualize::mouse_drag_world() + Eigen::Vector3d::Constant(1e-6);
                 dV_spring_particle_particle_dq(dV_mouse, mouse, (P.transpose()*q+x0).segment<3>(3*Visualize::picked_vertices()[pickedi]), 0.0, (Visualize::is_mouse_dragging() ? k_selected : 0.));
-                f.segment<3>(3*Visualize::picked_vertices()[pickedi]) -= dV_mouse.segment<3>(3);
+                f.segment<3>(3*Visualize::picked_vertices()[pickedi]) += dV_mouse.segment<3>(3);
             }
             //std::cout<<q.rows()<<std::endl;
             //std::cout<<f.rows()<<std::endl;
